@@ -32,6 +32,7 @@ services:
       - NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
       - NEXT_PUBLIC_AI_BASE_URL=http://localhost:8000
     depends_on:
+      - api
       - ai_service
 
   admin:

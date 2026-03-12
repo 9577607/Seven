@@ -12,24 +12,36 @@ AutoContent 是一个面向 iOS/Android/Web 的 AI 内容自动生产与工作�
 - 数据库：PostgreSQL
 - 缓存与队列：Redis + RabbitMQ
 
-## 新增 Web 界面（全部中文）
+## 升级后的人工分步骤内容工作流（中文）
 
-### 用户端 Frontend
+用户端地址：<http://localhost:3001>
 
-地址：<http://localhost:3001>
+流程：
 
-- 首页标题：**AI内容自动生产平台**
-- 输入主题后支持：生成文案、生成图片、生成视频
-- 通过 API 服务（3000）调用 AI 能力，完成 API 与 AI 的联动
-- 展示文案/图片/视频结果，并提供下载按钮
+1. 主题输入（示例：金莲花好运视频）
+2. 文案选择：生成 5 条候选文案，用户选择 1 条
+3. 图片选择：生成 4~6 张候选图片，用户选择 1 张
+4. 视频生成：生成多个模板版本（9:16、带字幕版、无字幕版、不同音乐版）并选择 1 个
+5. 字幕处理：自动字幕 / 手动字幕 / 无字幕
+6. 导出视频：下载最终视频，并提示“手动发布到抖音”（不自动发布）
 
-### 后台 Admin
+每一步必须先选择结果，才能进入下一步。
 
-地址：<http://localhost:3002>
+## 后台管理系统（中文）
 
-- 系统名称：**AutoContent 内容生产管理系统**
-- 模块：仪表盘、用户管理、内容生成记录、任务队列、素材库、工作流管理、系统日志
-- 仪表盘展示：今日生成数量、任务队列状态、API/AI系统运行状态、用户数量
+后台地址：<http://localhost:3002>
+
+模块：
+
+- 仪表盘
+- 用户管理
+- 内容生产记录
+- 任务队列
+- 素材库
+- 工作流管理
+- 系统日志
+
+其中“内容生产记录”会展示每次生产的主题、文案、图片、视频、字幕模式和时间。
 
 ## Docker Compose 一键启动
 
@@ -43,19 +55,3 @@ docker compose up -d --build
 - 后台管理：<http://localhost:3002>
 - API 健康检查：<http://localhost:3000/health>
 - AI 健康检查：<http://localhost:8000/health>
-
-## 关键 AI 接口示例
-
-```bash
-curl -X POST http://localhost:8000/generate/copy \
-  -H 'Content-Type: application/json' \
-  -d '{"topic":"好运金莲花","style":"治愈风","platform":"抖音","length":"30s","language":"zh"}'
-
-curl -X POST http://localhost:8000/generate/image \
-  -H 'Content-Type: application/json' \
-  -d '{"prompt":"golden lotus, zen style","style":"插画","ratio":"9:16","resolution":"1024x1792"}'
-
-curl -X POST http://localhost:8000/generate/video \
-  -H 'Content-Type: application/json' \
-  -d '{"prompt":"zen lotus in sunlight","duration":"10","ratio":"9:16","fps":30,"style":"电影感","camera_motion":"推进"}'
-```

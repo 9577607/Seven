@@ -16,6 +16,7 @@ const users = [];
 const orders = [];
 const subscriptions = [];
 const assets = [];
+const productionRecords = [];
 
 function auth(req, res, next) {
   const header = req.headers.authorization;
@@ -139,14 +140,28 @@ app.post('/api/ai/generate-copy', auth, async (req, res) => {
 
 app.post('/api/ai/generate-image', auth, async (req, res) => {
   const response = await axios.post(`${AI_SERVICE_URL}/api/ai/generate-image`, req.body);
-  const item = { id: assets.length + 1, user_id: req.user.user_id, type: 'image', url: response.data.image_url, metadata: req.body, created_at: new Date().toISOString() };
+  const item = {
+    id: assets.length + 1,
+    user_id: req.user.user_id,
+    type: 'image',
+    url: response.data.image_url,
+    metadata: req.body,
+    created_at: new Date().toISOString(),
+  };
   assets.push(item);
   res.json(response.data);
 });
 
 app.post('/api/ai/generate-video', auth, async (req, res) => {
   const response = await axios.post(`${AI_SERVICE_URL}/api/ai/generate-video`, req.body);
-  const item = { id: assets.length + 1, user_id: req.user.user_id, type: 'video', url: response.data.video_url, metadata: req.body, created_at: new Date().toISOString() };
+  const item = {
+    id: assets.length + 1,
+    user_id: req.user.user_id,
+    type: 'video',
+    url: response.data.video_url,
+    metadata: req.body,
+    created_at: new Date().toISOString(),
+  };
   assets.push(item);
   res.json(response.data);
 });
@@ -176,9 +191,29 @@ app.post('/api/assets/delete', auth, (req, res) => {
   res.json({ message: 'deleted' });
 });
 
+app.post('/api/workflow/production-records', auth, (req, res) => {
+  const { topic, copy, image_url, video_url, subtitle_mode } = req.body;
+  const record = {
+    id: productionRecords.length + 1,
+    user_id: req.user.user_id,
+    topic,
+    copy,
+    image_url,
+    video_url,
+    subtitle_mode,
+    created_at: new Date().toISOString(),
+  };
+  productionRecords.unshift(record);
+  res.json({ message: 'recorded', record });
+});
+
+app.get('/api/workflow/production-records', (_, res) => {
+  res.json(productionRecords.slice(0, 200));
+});
+
 app.post('/api/publish', auth, (req, res) => {
   const { platform, title } = req.body;
-  res.json({ message: 'publish queued', platform, title, status: 'pending' });
+  res.json({ message: 'manual publish only', platform, title, status: 'ready_for_manual_publish' });
 });
 
 app.listen(PORT, () => {
