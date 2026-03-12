@@ -1,5 +1,13 @@
 import { useMemo, useState, useEffect } from 'react';
-import { AppstoreOutlined, DashboardOutlined, DatabaseOutlined, FileTextOutlined, TeamOutlined, ClusterOutlined, BarsOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  DashboardOutlined,
+  DatabaseOutlined,
+  FileTextOutlined,
+  TeamOutlined,
+  ClusterOutlined,
+  BarsOutlined
+} from '@ant-design/icons';
 import { Card, Col, Layout, Menu, Row, Statistic, Table, Tag, Typography } from 'antd';
 import axios from 'axios';
 
@@ -19,13 +27,15 @@ const menuItems = [
 export default function App() {
   const [selected, setSelected] = useState('dashboard');
   const [apiStatus, setApiStatus] = useState<'运行中' | '异常'>('异常');
+  const [aiStatus, setAiStatus] = useState<'运行中' | '异常'>('异常');
+
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+  const aiBase = import.meta.env.VITE_AI_BASE_URL || 'http://localhost:8000';
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/health')
-      .then(() => setApiStatus('运行中'))
-      .catch(() => setApiStatus('异常'));
-  }, []);
+    axios.get(`${apiBase}/health`).then(() => setApiStatus('运行中')).catch(() => setApiStatus('异常'));
+    axios.get(`${aiBase}/health`).then(() => setAiStatus('运行中')).catch(() => setAiStatus('异常'));
+  }, [apiBase, aiBase]);
 
   const queueData = useMemo(
     () => [
@@ -35,6 +45,60 @@ export default function App() {
     ],
     []
   );
+
+  const renderDashboard = () => (
+    <Card>
+      <Title level={4}>仪表盘</Title>
+      <Paragraph>集中查看平台运行状态、生成任务与用户规模。</Paragraph>
+      <Row gutter={16}>
+        <Col span={6}><Card><Statistic title="今日生成数量" value={286} suffix="条" /></Card></Col>
+        <Col span={6}><Card><Statistic title="任务队列处理中" value={34} suffix="个" /></Card></Col>
+        <Col span={6}><Card><Statistic title="API系统运行状态" value={apiStatus} /></Card></Col>
+        <Col span={6}><Card><Statistic title="AI系统运行状态" value={aiStatus} /></Card></Col>
+      </Row>
+      <Row gutter={16} style={{ marginTop: 16 }}>
+        <Col span={6}><Card><Statistic title="用户数量" value={1248} suffix="人" /></Card></Col>
+      </Row>
+
+      <div style={{ marginTop: 24 }}>
+        <Title level={5}>任务队列状态</Title>
+        <Table
+          dataSource={queueData}
+          pagination={false}
+          columns={[
+            { title: '任务类型', dataIndex: 'type' },
+            {
+              title: '状态',
+              dataIndex: 'status',
+              render: (value: string) => {
+                const color = value === 'completed' ? 'green' : value === 'processing' ? 'blue' : 'orange';
+                const text = value === 'completed' ? '已完成' : value === 'processing' ? '处理中' : '待处理';
+                return <Tag color={color}>{text}</Tag>;
+              }
+            },
+            { title: '创建时间', dataIndex: 'created_at' }
+          ]}
+        />
+      </div>
+    </Card>
+  );
+
+  const placeholder = (title: string, desc: string) => (
+    <Card>
+      <Title level={4}>{title}</Title>
+      <Paragraph>{desc}</Paragraph>
+    </Card>
+  );
+
+  const moduleViews: Record<string, JSX.Element> = {
+    dashboard: renderDashboard(),
+    users: placeholder('用户管理', '管理用户信息、会员状态、登录行为与权限。'),
+    records: placeholder('内容生成记录', '查看文案、图片、视频的生成记录和结果详情。'),
+    queue: placeholder('任务队列', '查看队列堆积、任务执行状态和失败重试情况。'),
+    assets: placeholder('素材库', '管理所有生成素材，支持搜索、标签和删除。'),
+    workflow: placeholder('工作流管理', '配置内容自动化流程节点与连接关系。'),
+    logs: placeholder('系统日志', '审计用户操作和系统行为日志。')
+  };
 
   return (
     <Layout style={{ minHeight: '100%' }}>
@@ -46,39 +110,7 @@ export default function App() {
         <Header style={{ background: '#fff', display: 'flex', alignItems: 'center' }}>
           <Title level={4} style={{ margin: 0 }}>AutoContent 内容生产管理系统</Title>
         </Header>
-        <Content style={{ margin: 16 }}>
-          <Card>
-            <Title level={4}>仪表盘</Title>
-            <Paragraph>集中查看平台运行状态、生成任务与用户规模。</Paragraph>
-            <Row gutter={16}>
-              <Col span={6}><Card><Statistic title="今日生成数量" value={286} suffix="条" /></Card></Col>
-              <Col span={6}><Card><Statistic title="任务队列处理中" value={34} suffix="个" /></Card></Col>
-              <Col span={6}><Card><Statistic title="系统运行状态" value={apiStatus} /></Card></Col>
-              <Col span={6}><Card><Statistic title="用户数量" value={1248} suffix="人" /></Card></Col>
-            </Row>
-
-            <div style={{ marginTop: 24 }}>
-              <Title level={5}>任务队列状态</Title>
-              <Table
-                dataSource={queueData}
-                pagination={false}
-                columns={[
-                  { title: '任务类型', dataIndex: 'type' },
-                  {
-                    title: '状态',
-                    dataIndex: 'status',
-                    render: (value: string) => {
-                      const color = value === 'completed' ? 'green' : value === 'processing' ? 'blue' : 'orange';
-                      const text = value === 'completed' ? '已完成' : value === 'processing' ? '处理中' : '待处理';
-                      return <Tag color={color}>{text}</Tag>;
-                    }
-                  },
-                  { title: '创建时间', dataIndex: 'created_at' }
-                ]}
-              />
-            </div>
-          </Card>
-        </Content>
+        <Content style={{ margin: 16 }}>{moduleViews[selected]}</Content>
       </Layout>
     </Layout>
   );
