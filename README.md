@@ -62,3 +62,12 @@ docker compose up -d --build
 ## 预览与联调
 
 请参考 `docs/preview.md`。
+
+
+## 园林展会方案文档
+
+仓库已补充《园林展会 H5 + 微信小程序 + 后台管理系统》设计方案与示例数据库脚本：
+
+- 方案文档：`docs/garden-expo-solution.md`
+- 数据库脚本：`db/garden_expo_schema.sql`
+
