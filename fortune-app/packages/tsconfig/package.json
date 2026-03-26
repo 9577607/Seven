@@ -1,0 +1,5 @@
+{
+  "name": "@fortune/tsconfig",
+  "version": "1.0.0",
+  "main": "base.json"
+}

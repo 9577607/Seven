@@ -1,0 +1,13 @@
+{
+  "name": "mp-wechat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Build in WeChat DevTools'",
+    "lint": "echo 'Use miniprogram lint'"
+  },
+  "dependencies": {
+    "@vant/weapp": "^1.11.6",
+    "miniprogram-api-typings": "^3.12.0"
+  }
+}
