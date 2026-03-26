@@ -1,0 +1,1 @@
+-- Initial migration placeholder. Please run `prisma migrate dev --name init` to generate full SQL.

@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/history/index",
+    "pages/favorites/index",
+    "pages/mine/index",
+    "pages/login/index",
+    "pages/today/index",
+    "pages/bazi-form/index",
+    "pages/bazi-result/index",
+    "pages/tarot-form/index",
+    "pages/tarot-result/index",
+    "pages/compat-form/index",
+    "pages/compat-result/index",
+    "pages/feedback/index",
+    "pages/notice-detail/index",
+    "pages/poster/index",
+    "pages/policy/index"
+  ],
+  "tabBar": {
+    "list": [
+      { "pagePath": "pages/home/index", "text": "首页" },
+      { "pagePath": "pages/history/index", "text": "历史" },
+      { "pagePath": "pages/favorites/index", "text": "收藏" },
+      { "pagePath": "pages/mine/index", "text": "我的" }
+    ]
+  }
+}

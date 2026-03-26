@@ -1,0 +1,10 @@
+{
+  "extends": "../../../packages/tsconfig/base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
+  "include": ["src", "test", "prisma"]
+}

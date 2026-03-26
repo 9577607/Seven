@@ -1,0 +1,4 @@
+<view class='container'>
+  <view>{{title}}</view>
+  <disclaimer-bar />
+</view>
